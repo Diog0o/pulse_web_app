@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 
 export default function TabsLayout() {
   return (
@@ -8,7 +8,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          header: () => <CustomHeader title="Home" />,
+          header: () => <CustomHomeHeader />,
           tabBarLabel: "HOME",
           tabBarIcon: ({ focused, color }) => (
             <Ionicons
@@ -23,7 +23,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="workouts"
         options={{
-          headerTitle: "Workouts",
+          header: () => <CustomWorkoutHeader variant={2} />,
           tabBarLabel: "WORKOUTS",
           tabBarIcon: ({ focused, color }) => (
             <Ionicons
@@ -38,7 +38,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="start"
         options={{
-          headerTitle: "Start",
+          header: () => null,
           tabBarLabel: "START",
           tabBarIcon: ({ focused, color }) => (
             <Ionicons
@@ -53,7 +53,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="groups"
         options={{
-          headerTitle: "Groups",
+          header: () => <CustomGroupHeader />,
           tabBarLabel: "GROUPS",
           tabBarIcon: ({ focused, color }) => (
             <Ionicons
@@ -68,7 +68,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          headerTitle: "Profile",
+          header: () => <CustomProfileHeader />,
           tabBarLabel: "PROFILE",
           tabBarIcon: ({ focused, color }) => (
             <Ionicons
@@ -82,62 +82,110 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
+const CustomHomeHeader = () => {
+  return (
+    <View style={styles.header}>
+      <View>
+        <TouchableOpacity style={styles.upgradebutton}>
+          <Text style={styles.buttontitle}>UPGRADE TO PREMIUM</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.navCenterHome}>
+        <Text style={styles.title}>PULSE</Text>
+      </View>
+      <View style={styles.navRightHome}>
+        <TouchableOpacity>
+          <Ionicons name="search-outline" size={24} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Ionicons name="mail-outline" size={24} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Ionicons name="notifications-outline" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+const CustomWorkoutHeader = ({ variant }: { variant: number }) => {
+  return (
+    <View style={styles.header}>
+      <View style={styles.navLeftWorkout}>
+        <TouchableOpacity>
+          {variant === 1 ? (
+            <Ionicons name="person-circle-outline" size={24} />
+          ) : (
+            <Text style={styles.greyText}>Close</Text>
+          )}
+        </TouchableOpacity>
+      </View>
+      <View>
+        <Text style={styles.title}>WORKOUTS</Text>
+      </View>
+      <View style={styles.navRightWorkout}>
+        <TouchableOpacity>
+          {variant === 3 ? (
+            <Ionicons name="settings-outline" size={24} />
+          ) : (
+            <Text style={styles.greyText}>Done</Text>
+          )}
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
 
-const CustomHeader = ({ title }: { title: String }) => {
-  switch (title) {
-    case "Home":
-      return (
-        <View style={styles.header}>
-          <View style={styles.navLeft}>
-            <TouchableOpacity style={styles.upgradebutton}>
-              <Text style={styles.buttontitle}>UPGRADE TO PREMIUM</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.navCenter}>
-            <Text style={styles.title}>PULSE</Text>
-          </View>
-          <View style={styles.navRight}>
-            <Ionicons name="search-outline" size={24} color="black" />
-            <Ionicons name="mail-outline" size={24} color="black" />
-            <Ionicons name="notifications" size={24} color="black" />
-          </View>
-        </View>
-      );
-    case "Workouts":
-      return (
-        <View style={styles.header}>
-          <Text style={styles.title}>{title}</Text>
-        </View>
-      );
-    case "Start":
-      return (
-        <View style={styles.header}>
-          <Text style={styles.title}>{title}</Text>
-        </View>
-      );
-    case "Groups":
-      return (
-        <View style={styles.header}>
-          <Text style={styles.title}>{title}</Text>
-        </View>
-      );
-    case "Profile":
-      return (
-        <View style={styles.header}>
-          <Text style={styles.title}>{title}</Text>
-        </View>
-      );
-  }
+const CustomGroupHeader = () => {
+  return (
+    <View style={styles.header}>
+      <View style={styles.navLeftGroup}>
+        <TouchableOpacity>
+          <Ionicons name="search-outline" size={24} />
+        </TouchableOpacity>
+      </View>
+      <View>
+        <Text style={styles.title}>GROUPS</Text>
+      </View>
+      <View style={styles.navRightGroup}>
+        <TouchableOpacity>
+          <Ionicons name="settings-outline" size={24} />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Ionicons name="notifications-outline" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+const CustomProfileHeader = () => {
+  return (
+    <View style={styles.header}>
+      <View>
+        <TouchableOpacity>
+          <Ionicons name="person-circle-outline" size={24} />
+        </TouchableOpacity>
+      </View>
+      <View>
+        <Text style={styles.title}>PROFILE</Text>
+      </View>
+      <View>
+        <TouchableOpacity>
+          <Ionicons name="settings-outline" size={24} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
   header: {
-    display: "flex",
     flexDirection: "row",
-    height: 110,
+    height: 95,
     backgroundColor: "white",
+    justifyContent: "space-between",
     alignItems: "center",
-    paddingTop: 40,
+    paddingTop: 50,
     paddingHorizontal: 20,
     shadowColor: "#000",
     shadowOffset: {
@@ -149,22 +197,15 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 
-  navLeft: {
-    flex: 2.5,
-    justifyContent: "space-around",
-    flexDirection: "row",
-  },
-
-  navCenter: {
-    flex: 3,
-    justifyContent: "center",
+  navCenterHome: {
+    flex: 1,
     alignItems: "center",
   },
 
-  navRight: {
-    flex: 2.5,
-    justifyContent: "space-around",
+  navRightHome: {
     flexDirection: "row",
+    width: 100,
+    justifyContent: "space-between",
   },
 
   upgradebutton: {
@@ -183,7 +224,31 @@ const styles = StyleSheet.create({
 
   title: {
     color: "#1E90FF",
-    fontSize: 36,
+    fontSize: 28,
     fontFamily: "Anton-Regular",
   },
+
+  navLeftWorkout: {
+    width: 36,
+  },
+
+  navRightWorkout: {
+    width: 36,
+  },
+
+  greyText: {
+    fontFamily: "Roboto-Regular",
+    color: "#817F7F",
+    fontSize: 14,
+  },
+
+  navRightGroup: {
+    flexDirection: "row",
+    width: 75,
+    justifyContent: "space-between",
+  },
+
+  navLeftGroup: {
+    width: 75,
+  }
 });
