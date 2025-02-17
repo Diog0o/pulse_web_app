@@ -1,59 +1,189 @@
-import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
+import { Tabs } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
-
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+export default function TabsLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
-      }}>
+    <Tabs>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
+          header: () => <CustomHeader title="Home" />,
+          tabBarLabel: "HOME",
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons
+              name={focused ? "home-sharp" : "home-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
+
       <Tabs.Screen
-        name="two"
+        name="workouts"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerTitle: "Workouts",
+          tabBarLabel: "WORKOUTS",
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons
+              name={focused ? "barbell-sharp" : "barbell-outline"}
+              size={24}
+              color={color}
+            />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="start"
+        options={{
+          headerTitle: "Start",
+          tabBarLabel: "START",
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons
+              name={focused ? "add-circle-sharp" : "add-circle-outline"}
+              size={24}
+              color={color}
+            />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="groups"
+        options={{
+          headerTitle: "Groups",
+          tabBarLabel: "GROUPS",
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons
+              name={focused ? "people-sharp" : "people-outline"}
+              size={24}
+              color={color}
+            />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="profile"
+        options={{
+          headerTitle: "Profile",
+          tabBarLabel: "PROFILE",
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons
+              name={focused ? "person-sharp" : "person-outline"}
+              size={24}
+              color={color}
+            />
+          ),
         }}
       />
     </Tabs>
   );
 }
+
+const CustomHeader = ({ title }: { title: String }) => {
+  switch (title) {
+    case "Home":
+      return (
+        <View style={styles.header}>
+          <View style={styles.navLeft}>
+            <TouchableOpacity style={styles.upgradebutton}>
+              <Text style={styles.buttontitle}>UPGRADE TO PREMIUM</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.navCenter}>
+            <Text style={styles.title}>PULSE</Text>
+          </View>
+          <View style={styles.navRight}>
+            <Ionicons name="search-outline" size={24} color="black" />
+            <Ionicons name="mail-outline" size={24} color="black" />
+            <Ionicons name="notifications" size={24} color="black" />
+          </View>
+        </View>
+      );
+    case "Workouts":
+      return (
+        <View style={styles.header}>
+          <Text style={styles.title}>{title}</Text>
+        </View>
+      );
+    case "Start":
+      return (
+        <View style={styles.header}>
+          <Text style={styles.title}>{title}</Text>
+        </View>
+      );
+    case "Groups":
+      return (
+        <View style={styles.header}>
+          <Text style={styles.title}>{title}</Text>
+        </View>
+      );
+    case "Profile":
+      return (
+        <View style={styles.header}>
+          <Text style={styles.title}>{title}</Text>
+        </View>
+      );
+  }
+};
+
+const styles = StyleSheet.create({
+  header: {
+    display: "flex",
+    flexDirection: "row",
+    height: 110,
+    backgroundColor: "white",
+    alignItems: "center",
+    paddingTop: 40,
+    paddingHorizontal: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+
+  navLeft: {
+    flex: 2.5,
+    justifyContent: "space-around",
+    flexDirection: "row",
+  },
+
+  navCenter: {
+    flex: 3,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  navRight: {
+    flex: 2.5,
+    justifyContent: "space-around",
+    flexDirection: "row",
+  },
+
+  upgradebutton: {
+    borderWidth: 2,
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 8,
+    paddingRight: 8,
+    borderRadius: 10,
+  },
+
+  buttontitle: {
+    fontSize: 10,
+    fontFamily: "Anton",
+  },
+
+  title: {
+    color: "#1E90FF",
+    fontSize: 36,
+    fontFamily: "Anton-Regular",
+  },
+});
