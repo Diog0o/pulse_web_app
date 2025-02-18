@@ -1,5 +1,6 @@
-import { Text, View, StyleSheet, Image } from "react-native";
+import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import InputBox from "@/components/inputBox";
+import Button from "../components/Button"
 import { useState } from "react";
 
 const google_img = require("../assets/images/google.png");
@@ -63,13 +64,29 @@ export default function Login() {
           <Image source={apple_img} style={styles.image} />
         </View>
       </View>
+      <View style={{ marginTop: 50 }}>
+        <Button
+          title="Login"
+          onPress={() => console.log("Sign In")}
+          variant="first"
+          color="primary"
+          clickable={isPasswordValid && username.length > 0}
+          loading={false}
+        />
+      </View>
+      <View style={{ marginTop: 10, flexDirection: "row" }}>
+        <Text style={styles.firstText}>Don't have an account ? </Text>
+        <TouchableOpacity>
+        <Text style={styles.secondText}>Register</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 120,
+    marginTop: 100,
     alignItems: "center",
   },
 
@@ -133,4 +150,17 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
+
+  firstText: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 12,
+    color: "#9F9D9D",
+
+  },
+
+  secondText: {
+    fontFamily: "Roboto-Bold",
+    fontSize: 12,
+    color: "#000000",
+  }
 });
