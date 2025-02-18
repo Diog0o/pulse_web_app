@@ -51,7 +51,7 @@ export default function Login() {
         <View style={styles.orline} />
       </View>
       <View>
-        <Text style={styles.undertext}>Sign up usign</Text>
+        <Text style={styles.undertext}>Sign up using</Text>
       </View>
       <View style={styles.imagecontainers}>
         <View style={styles.imagecontainer}>
