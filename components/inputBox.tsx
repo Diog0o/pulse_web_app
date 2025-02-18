@@ -6,7 +6,7 @@ interface InputBoxProps {
   title: string;
   type: "username" | "password";
   hidden?: boolean;
-  onChangeText?: (text: string) => void;
+  onChangeText?: (text: string, validationState?: any) => void;
 }
 
 export default function InputBox({ title, type = "username", onChangeText }: InputBoxProps) {
@@ -19,18 +19,24 @@ export default function InputBox({ title, type = "username", onChangeText }: Inp
 
   const validatePassword = (text: string) => {
     setValue(text);
-    if (onChangeText){
-        onChangeText(text);
-    }
     setMin8(text.length >= 8);
     setMin1Upper(/[A-Z]/.test(text));
     setMin1Number(/[0-9]/.test(text));
     setMin1Special(/[!@#$%^&*(),.?":{}|<>]/.test(text));
+
+    if (onChangeText) {
+        onChangeText(text, { min8, min1Upper, min1Number, min1Special });
+      }
   };
 
   useEffect(() => {
     if (type === "password") {
       validatePassword(value);
+    }
+    else{
+        if (onChangeText){
+            onChangeText(value);
+        }
     }
   }, [value]);
 
