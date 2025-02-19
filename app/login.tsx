@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet, Image, TouchableOpacity, Alert } from "react-native";
 import InputBox from "@/components/inputBox";
 import Button from "../components/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -9,24 +9,36 @@ const google_img = require("../assets/images/google.png");
 const facebook_img = require("../assets/images/facebook.png");
 const apple_img = require("../assets/images/apple.png");
 
-
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handlePasswordChange = (text: string, validationState?: any) => {
     setPassword(text);
+    console.log(validationState);
     setIsPasswordValid(
       validationState.min8 &&
         validationState.min1Upper &&
-        validationState.min1Number &&
-        validationState.min1Special
+        validationState.min1Special &&
+        validationState.min1Number
     );
   };
 
+  const handleEmailChange = (text:string) => {
+        setIsEmailValid(text.includes("@") && text.includes(".com"));
+  }
+
+  useEffect(() => {
+    handleEmailChange(email);
+  }, [email]);
+ 
+
 const handleLogin = async ()  => {
     try {
+        setLoading(true)
         const response = await axios.post("http://localhost:3000/api/users/login", {
             email,
             password
@@ -35,11 +47,13 @@ const handleLogin = async ()  => {
         console.log(response.data)
 
         //Save the token
-        console.log(response.data.token)
-        AsyncStorage.setItem("token", response.data.token)
+        console.log(response.data.jwt_token)
+        AsyncStorage.setItem("token", response.data.jwt_token)
+        setLoading(false)
+
     }
     catch {
-
+        Alert.alert("Error", "An error occurred")
     }
 }
 
@@ -94,11 +108,11 @@ const handleLogin = async ()  => {
       <View style={{ marginTop: 50 }}>
         <Button
           title="Login"
-          onPress={() => console.log("Sign In")}
+          onPress={handleLogin}
           variant="first"
           color="primary"
-          clickable={isPasswordValid && email.length > 0}
-          loading={false}
+          clickable={isPasswordValid && isEmailValid}
+          loading={loading}
         />
       </View>
       <View style={{ marginTop: 10, flexDirection: "row" }}>

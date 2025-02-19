@@ -18,11 +18,17 @@ export default function InputBox({ title, type = "email", onChangeText }: InputB
   const [min1Special, setMin1Special] = useState(false);
 
   const validatePassword = (text: string) => {
-    setValue(text);
-    setMin8(text.length >= 8);
-    setMin1Upper(/[A-Z]/.test(text));
-    setMin1Number(/[0-9]/.test(text));
-    setMin1Special(/[!@#$%^&*(),.?":{}|<>]/.test(text));
+
+    //Calcular primeiro e guardar em constantes para atualizar logo
+    const min8 = text.length >= 8;
+    const min1Upper = /[A-Z]/.test(text);
+    const min1Number = /[0-9]/.test(text);
+    const min1Special = /[!@#$%^&*(),.?":{}|<>]/.test(text);
+
+    setMin8(min8);
+    setMin1Upper(min1Upper);
+    setMin1Number(min1Number);
+    setMin1Special(min1Special);
 
     if (onChangeText) {
         onChangeText(text, { min8, min1Upper, min1Number, min1Special });
