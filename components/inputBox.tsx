@@ -62,6 +62,7 @@ export default function InputBox({ title, type = "email", onChangeText, verifica
               ? "Enter your password"
               : "Enter your username"
           }
+          autoCapitalize="none"
           secureTextEntry={ type === "password" && hidden}
           value={value}
           onChangeText={setValue}
