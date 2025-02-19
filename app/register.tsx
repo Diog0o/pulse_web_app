@@ -1,11 +1,4 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -20,16 +13,17 @@ export default function Register() {
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   //Check if passowrd is valid
-  useEffect (() => {
+  useEffect(() => {
     const min8letters = password.length >= 8;
     const min1Upper = /[A-Z]/.test(password);
     const min1Number = /[0-9]/.test(password);
     const min1Special = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
     setIsPasswordValid(min8letters && min1Upper && min1Number && min1Special);
-  }, [password])
+  }, [password]);
 
   //Check if email is valid
   useEffect(() => {
@@ -39,27 +33,52 @@ export default function Register() {
     setIsEmailValid(includesAt && includesDotCom);
   }, [email]);
 
+  //Writing any input changes erases the error
+  useEffect(() => {
+    setError(false);
+  }, [username, email, password]);
+
   //register call to the api
   const handleRegister = async () => {
     try {
-        setLoading(true);
-        const response = await axios.post("http://localhost:3000/api/users/register", {
-            username,
-            email,
-            password
-        })
-        setLoading(false);
-        Alert.alert("Success", "You have successfully registered")
-        console.log(response.data)
+      setLoading(true);
+      const lowerCaseEmail = email.toLowerCase();
+      console.log(lowerCaseEmail);
+      const response = await axios.post(
+        "http://localhost:3000/api/users/register",
+        {
+          username: username,
+          email: lowerCaseEmail,
+          password: password,
+        }
+      );
+      setLoading(false);
+      setPassword("");
+      setUsername("");
+      setEmail("");
 
-        AsyncStorage.setItem("token", response.data.token)
-    }
-    catch (error_message){
-        setLoading(false);
+      Alert.alert("Success", "You have successfully registered");
+      console.log(response.data);
+
+      AsyncStorage.setItem("token", response.data.token);
+
+    } catch (error_message) {
+      setLoading(false);
+      setError(true);
+      if (axios.isAxiosError(error_message)) {
+        if (error_message.response?.status === 400) {
+            setErrorMessage("This email is already registered. Login instead.");
+        } else if (error_message.response?.status === 500) {
+          setErrorMessage("Ops! Server is busy. Try again later.");
+        } else {
+            setErrorMessage("Ops! Server is busy. Try again later.");
+        }
+      } else {
         console.log(error_message);
-        
+        setErrorMessage("Ops! Server is busy. Try again later.");
+      }
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -99,7 +118,7 @@ export default function Register() {
           clickable={isEmailValid && isPasswordValid}
           loading={loading}
           error={error}
-          errorMessage="Wrong Password"
+          errorMessage={errorMessage}
         ></Button>
       </View>
       <View style={{ marginTop: 20, flexDirection: "row" }}>
