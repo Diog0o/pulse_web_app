@@ -4,12 +4,12 @@ import { Ionicons } from "@expo/vector-icons";
 
 interface InputBoxProps {
   title: string;
-  type: "username" | "password";
+  type: "email" | "password";
   hidden?: boolean;
   onChangeText?: (text: string, validationState?: any) => void;
 }
 
-export default function InputBox({ title, type = "username", onChangeText }: InputBoxProps) {
+export default function InputBox({ title, type = "email", onChangeText }: InputBoxProps) {
   const [value, setValue] = useState("");
   const [hidden, setHidden] = useState(true);
   const [min8, setMin8] = useState(false);
@@ -49,9 +49,9 @@ export default function InputBox({ title, type = "username", onChangeText }: Inp
         <TextInput
           style={styles.input}
           placeholder={
-            type === "username" ? "Enter your username" : "Enter your password"
+            type === "email" ? "Enter your email" : "Enter your password"
           }
-          secureTextEntry={ type === "username" ? false :  hidden}
+          secureTextEntry={ type === "email" ? false :  hidden}
           value={value}
           onChangeText={setValue}
         />

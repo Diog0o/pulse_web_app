@@ -1,14 +1,17 @@
-import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, Image, TouchableOpacity, Alert } from "react-native";
 import InputBox from "@/components/inputBox";
-import Button from "../components/Button"
+import Button from "../components/Button";
 import { useState } from "react";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const google_img = require("../assets/images/google.png");
 const facebook_img = require("../assets/images/facebook.png");
 const apple_img = require("../assets/images/apple.png");
 
+
 export default function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordValid, setIsPasswordValid] = useState(false);
 
@@ -21,6 +24,24 @@ export default function Login() {
         validationState.min1Special
     );
   };
+
+const handleLogin = async ()  => {
+    try {
+        const response = await axios.post("http://localhost:3000/api/users/login", {
+            email,
+            password
+        })
+        Alert.alert("Success", "You have successfully logged in")
+        console.log(response.data)
+
+        //Save the token
+        console.log(response.data.token)
+        AsyncStorage.setItem("token", response.data.token)
+    }
+    catch {
+
+    }
+}
 
   return (
     <View style={styles.container}>
@@ -35,9 +56,9 @@ export default function Login() {
       </View>
       <View style={{ marginBottom: 10 }}>
         <InputBox
-          title="Username"
-          type="username"
-          onChangeText={(text) => setUsername(text)}
+          title="Email"
+          type="email"
+          onChangeText={(text) => setEmail(text)}
         />
         <InputBox
           title="Password"
@@ -54,15 +75,21 @@ export default function Login() {
         <Text style={styles.undertext}>Sign up using</Text>
       </View>
       <View style={styles.imagecontainers}>
-        <View style={styles.imagecontainer}>
-          <Image source={google_img} style={styles.image} />
-        </View>
-        <View style={styles.imagecontainer}>
-          <Image source={facebook_img} style={styles.image} />
-        </View>
-        <View style={styles.imagecontainer}>
-          <Image source={apple_img} style={styles.image} />
-        </View>
+        <TouchableOpacity>
+          <View style={styles.imagecontainer}>
+            <Image source={google_img} style={styles.image} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <View style={styles.imagecontainer}>
+            <Image source={facebook_img} style={styles.image} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <View style={styles.imagecontainer}>
+            <Image source={apple_img} style={styles.image} />
+          </View>
+        </TouchableOpacity>
       </View>
       <View style={{ marginTop: 50 }}>
         <Button
@@ -70,14 +97,14 @@ export default function Login() {
           onPress={() => console.log("Sign In")}
           variant="first"
           color="primary"
-          clickable={isPasswordValid && username.length > 0}
+          clickable={isPasswordValid && email.length > 0}
           loading={false}
         />
       </View>
       <View style={{ marginTop: 10, flexDirection: "row" }}>
         <Text style={styles.firstText}>Don't have an account ? </Text>
         <TouchableOpacity>
-        <Text style={styles.secondText}>Register</Text>
+          <Text style={styles.secondText}>Register</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -155,12 +182,11 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto-Regular",
     fontSize: 12,
     color: "#9F9D9D",
-
   },
 
   secondText: {
     fontFamily: "Roboto-Bold",
     fontSize: 12,
     color: "#000000",
-  }
+  },
 });
