@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 import { ActivityIndicator } from "react-native";
 
 interface InputButtonProps {
@@ -10,6 +10,7 @@ interface InputButtonProps {
   clickable?: boolean;
   error?: boolean;
   loading?: boolean;
+  errorMessage?: string;
 }
 
 export default function Button({
@@ -20,13 +21,14 @@ export default function Button({
   clickable = true,
   error = false,
   loading = false,
+  errorMessage,
 }: InputButtonProps) {
   const buttonStylesArray = [
     styles.baseButton,
     styles[`variant_${variant}`],
     styles[`color_${color}`],
     !clickable && styles.disabled,
-    error && styles.error
+    error && styles.error,
   ];
 
   const textStylesArray = [
@@ -35,17 +37,30 @@ export default function Button({
   ];
 
   return (
-    <TouchableOpacity
-      style={buttonStylesArray}
-      onPress={clickable ? onPress : undefined}
-      disabled={!clickable}
-    >
-      {loading ? <ActivityIndicator color={color === "primary" ? "#FFFFFF" : "#1E90FF"}/> : <Text style={textStylesArray}>{title}</Text>}
-    </TouchableOpacity>
+    <View style={styles.container}>
+      {error && <Text style={styles.errorMessage}>{errorMessage}</Text>}
+      <TouchableOpacity
+        style={buttonStylesArray}
+        onPress={clickable ? onPress : undefined}
+        disabled={!clickable}
+      >
+        {loading ? (
+          <ActivityIndicator
+            color={color === "primary" ? "#FFFFFF" : "#1E90FF"}
+          />
+        ) : (
+          <Text style={textStylesArray}>{title}</Text>
+        )}
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
   baseButton: {
     justifyContent: "center",
     alignItems: "center",
@@ -106,5 +121,12 @@ const styles = StyleSheet.create({
 
   error: {
     backgroundColor: "#FF3333",
+  },
+
+  errorMessage: {
+    color: "#FF3333",
+    fontFamily: "Roboto-Regular",
+    fontSize: 12,
+    marginBottom: 5,
   },
 });
