@@ -68,7 +68,7 @@ const handleLogin = async ()  => {
       <View style={{ marginTop: 10, marginBottom: 50 }}>
         <Text style={styles.signinmessage}>Sign in into your account</Text>
       </View>
-      <View style={{ marginBottom: 10 }}>
+      <View style={{ marginBottom: 30 }}>
         <InputBox
           title="Email"
           type="email"
@@ -127,7 +127,8 @@ const handleLogin = async ()  => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 100,
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
   },
 
