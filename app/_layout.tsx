@@ -31,6 +31,7 @@ export default function RootLayout() {
     const checkAuth = async () => {
       const token = await AsyncStorage.getItem("token");
       setIsAuthenticated(token ? true : false);
+      //AsyncStorage.removeItem("token");
       setLoading(false);
     };
     checkAuth();
@@ -38,7 +39,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (isMounted && !loading && loaded && isAuthenticated === false) {
-      router.replace("/login");
+      router.replace("/register");
     }
   }, [isMounted, loading, loaded, isAuthenticated]);
 
@@ -68,6 +69,12 @@ export default function RootLayout() {
         />
         <Stack.Screen 
           name="login"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen 
+          name="register"
           options={{
             headerShown: false,
           }}
