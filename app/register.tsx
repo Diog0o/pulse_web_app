@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import InputBox from "@/components/inputBox";
 import Button from "@/components/Button";
+import { useRouter } from "expo-router";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -14,6 +15,8 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const router = useRouter();
 
   //Check if passowrd is valid
   useEffect(() => {
@@ -58,9 +61,9 @@ export default function Register() {
       setEmail("");
 
       Alert.alert("Success", "You have successfully registered");
-      console.log(response.data);
-
       AsyncStorage.setItem("token", response.data.token);
+
+      router.replace("/(tabs)");
 
     } catch (error_message) {
       setLoading(false);
@@ -123,7 +126,7 @@ export default function Register() {
       </View>
       <View style={{ marginTop: 20, flexDirection: "row" }}>
         <Text style={styles.firstText}>Already have an account ? </Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.replace("/login")}>
           <Text style={styles.secondText}>Sign up</Text>
         </TouchableOpacity>
       </View>

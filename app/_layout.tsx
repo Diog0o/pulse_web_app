@@ -39,7 +39,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (isMounted && !loading && loaded && isAuthenticated === false) {
-      router.replace("/register");
+      router.replace("/login");
     }
   }, [isMounted, loading, loaded, isAuthenticated]);
 
