@@ -4,6 +4,7 @@ import Button from "../components/Button";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 
 const google_img = require("../assets/images/google.png");
 const facebook_img = require("../assets/images/facebook.png");
@@ -12,48 +13,48 @@ const apple_img = require("../assets/images/apple.png");
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isEmailValid, setIsEmailValid] = useState(false);
-  const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("")
 
-  const handlePasswordChange = (text: string, validationState?: any) => {
-    setPassword(text);
-    console.log(validationState);
-    setIsPasswordValid(
-      validationState.min8 &&
-        validationState.min1Upper &&
-        validationState.min1Special &&
-        validationState.min1Number
-    );
-  };
-
-  const handleEmailChange = (text:string) => {
-        setIsEmailValid(text.includes("@") && text.includes(".com"));
-  }
+  const router = useRouter();
 
   useEffect(() => {
-    handleEmailChange(email);
-  }, [email]);
- 
+    setError(false);
+  }, [email, password])
 
 const handleLogin = async ()  => {
     try {
         setLoading(true)
         const response = await axios.post("http://localhost:3000/api/users/login", {
-            email,
-            password
+            email: email,
+            password: password
         })
+        setLoading(false)
         Alert.alert("Success", "You have successfully logged in")
         console.log(response.data)
 
         //Save the token
         console.log(response.data.jwt_token)
         AsyncStorage.setItem("token", response.data.jwt_token)
-        setLoading(false)
+        
+        router.replace("/(tabs)")
 
     }
-    catch {
-        Alert.alert("Error", "An error occurred")
+    catch (error_message){
+        setLoading(false)
+        setError(true)
+        console.log(error_message)
+        if (axios.isAxiosError(error_message)){
+            if (error_message.response?.status === 404 || error_message.response?.status === 400) {
+                console.log(error_message);
+                setErrorMessage("Passwords don't match try again");
+
+            }
+        }
+        else {
+            setErrorMessage("An error occurred! Try again later");
+        }
     }
 }
 
@@ -77,7 +78,7 @@ const handleLogin = async ()  => {
         <InputBox
           title="Password"
           type="password"
-          onChangeText={handlePasswordChange}
+          onChangeText={(text) => setPassword(text)}
         />
       </View>
       <View style={styles.separatorcontainer}>
@@ -109,15 +110,14 @@ const handleLogin = async ()  => {
         <Button
           title="Login"
           onPress={handleLogin}
-          variant="first"
-          color="primary"
-          clickable={isPasswordValid && isEmailValid}
           loading={loading}
+          error={error}
+          errorMessage={errorMessage}
         />
       </View>
       <View style={{ marginTop: 10, flexDirection: "row" }}>
         <Text style={styles.firstText}>Don't have an account ? </Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.replace("/register")}>
           <Text style={styles.secondText}>Register</Text>
         </TouchableOpacity>
       </View>
