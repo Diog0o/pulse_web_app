@@ -6,7 +6,7 @@ import {
   isTokenExpired,
   refreshAccessToken,
   clearTokens,
-} from "../utils/tokenService";
+} from "../utils/auth";
 
 const api = axios.create({
   baseURL: Constants.expoConfig.extra.API_URL,
