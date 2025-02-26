@@ -8,7 +8,7 @@ import {
 import { config } from "dotenv";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: config.API_URL,
 });
 
 // Request interceptor to attach the access token to requests
