@@ -18,8 +18,6 @@ export default function LikeButton({ post_id }: LikeButtonProps) {
         const response = await axios.get(
           `http://localhost:3000/api/likes/${post_id}`
         );
-        console.log("Aqui")
-        console.log(response.data);
       } catch (error) {
         Alert.alert("Error", "An error occurred while fetching likes");
       }
