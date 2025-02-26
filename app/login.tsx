@@ -1,8 +1,9 @@
 import { Text, View, StyleSheet, Image, TouchableOpacity, Alert } from "react-native";
+import { isAxiosError } from "axios";
 import InputBox from "@/components/inputBox";
 import Button from "../components/Button";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 
@@ -26,7 +27,7 @@ export default function Login() {
 const handleLogin = async ()  => {
     try {
         setLoading(true)
-        const response = await axios.post("http://localhost:3000/api/users/login", {
+        const response = await api.post("/users/login", {
             email: email,
             password: password
         })
@@ -44,8 +45,7 @@ const handleLogin = async ()  => {
     catch (error_message){
         setLoading(false)
         setError(true)
-        console.log(error_message)
-        if (axios.isAxiosError(error_message)){
+        if (isAxiosError(error_message)){
             if (error_message.response?.status === 404 || error_message.response?.status === 400) {
                 console.log(error_message);
                 setErrorMessage("Passwords don't match try again");

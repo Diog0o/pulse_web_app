@@ -1,7 +1,8 @@
 import { Text, View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+import api from "@/api/api";
+import { isAxiosError } from "axios";
 import InputBox from "@/components/inputBox";
 import Button from "@/components/Button";
 import { useRouter } from "expo-router";
@@ -47,8 +48,8 @@ export default function Register() {
       setLoading(true);
       const lowerCaseEmail = email.toLowerCase();
       console.log(lowerCaseEmail);
-      const response = await axios.post(
-        "http://localhost:3000/api/users/register",
+      const response = await api.post(
+        "/users/register",
         {
           username: username,
           email: lowerCaseEmail,
@@ -68,7 +69,7 @@ export default function Register() {
     } catch (error_message) {
       setLoading(false);
       setError(true);
-      if (axios.isAxiosError(error_message)) {
+      if (isAxiosError(error_message)) {
         if (error_message.response?.status === 400) {
             setErrorMessage("This email is already registered. Login instead.");
         } else if (error_message.response?.status === 500) {
