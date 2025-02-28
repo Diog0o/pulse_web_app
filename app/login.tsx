@@ -1,11 +1,9 @@
-import { Text, View, StyleSheet, Image, TouchableOpacity, Alert } from "react-native";
-import { isAxiosError } from "axios";
+import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import InputBox from "@/components/inputBox";
 import Button from "../components/Button";
 import { useEffect, useState } from "react";
-import api from "../api/api";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import { useAuth } from "@/context/authContext";
 
 const google_img = require("../assets/images/google.png");
 const facebook_img = require("../assets/images/facebook.png");
@@ -14,49 +12,15 @@ const apple_img = require("../assets/images/apple.png");
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("")
+  const { login, loginLoading, error, setError } = useAuth();
 
   const router = useRouter();
 
   useEffect(() => {
-    setError(false);
-  }, [email, password])
-
-const handleLogin = async ()  => {
-    try {
-        setLoading(true)
-        const response = await api.post("/users/login", {
-            email: email,
-            password: password
-        })
-        setLoading(false)
-        Alert.alert("Success", "You have successfully logged in")
-        console.log(response.data)
-
-        //Save the token
-        console.log(response.data.jwt_token)
-        AsyncStorage.setItem("token", response.data.jwt_token)
-        
-        router.replace("/(tabs)")
-
+    if (error) {
+      setError(null);
     }
-    catch (error_message){
-        setLoading(false)
-        setError(true)
-        if (isAxiosError(error_message)){
-            if (error_message.response?.status === 404 || error_message.response?.status === 400) {
-                console.log(error_message);
-                setErrorMessage("Passwords don't match try again");
-
-            }
-        }
-        else {
-            setErrorMessage("An error occurred! Try again later");
-        }
-    }
-}
+  }, [email, password]);
 
   return (
     <View style={styles.container}>
@@ -109,10 +73,10 @@ const handleLogin = async ()  => {
       <View style={{ marginTop: 50 }}>
         <Button
           title="Login"
-          onPress={handleLogin}
-          loading={loading}
-          error={error}
-          errorMessage={errorMessage}
+          onPress={login.bind(null, email, password)}
+          loading={loginLoading}
+          error={ error ? true : false }
+          errorMessage={error}
         />
       </View>
       <View style={{ marginTop: 10, flexDirection: "row" }}>
