@@ -73,7 +73,7 @@ export default function Login() {
       <View style={{ marginTop: 50 }}>
         <Button
           title="Login"
-          onPress={login.bind(null, email, password)}
+          onPress={() => login(email, password)}
           loading={loginLoading}
           error={ error ? true : false }
           errorMessage={error}
