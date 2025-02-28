@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useRouter } from "expo-router";
+import { Alert } from "react-native";
 
 const AuthContext = createContext();
 
@@ -23,12 +24,12 @@ export const AuthProvider = ({ children }) => {
           "Authorization"
         ] = `Bearer ${accessToken}`;
         try {
-          const response = await axios.get("http://localhost:3000/api/auth/me"); // FIXED: Added "http://"
+          const response = await axios.get("http://localhost:3000/api/auth/me");
           setUser(response.data.user);
         } catch (error) {
           console.log("Error fetching user:", error);
           setUser(null);
-          await AsyncStorage.removeItem("accessToken"); // Remove expired token
+          await AsyncStorage.removeItem("accessToken");
         }
       }
       setLoading(false);
@@ -63,8 +64,38 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const logout = async () => {
+    try {
+      const refreshToken = await AsyncStorage.getItem("refreshToken");
+
+      if (!refreshToken) {
+        Alert.alert("Error", "No refresh token found.");
+        return;
+      }
+
+      // Remove tokens before API call
+      await AsyncStorage.removeItem("accessToken");
+      await AsyncStorage.removeItem("refreshToken");
+
+      const response = await axios.post("http://localhost:3000/api/auth/logout", {
+        refreshToken,
+      });
+
+      if (response.status === 200) {
+        setUser(null);
+        Alert.alert("Success", "Logged out successfully.");
+        router.replace("/login");
+      } else {
+        Alert.alert("Error", "An error occurred while logging out.");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      Alert.alert("Error", "Something went wrong. Please try again.");
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, error, login, setError }}>
+    <AuthContext.Provider value={{ user, setUser, loading, error, login, setError, logout }}>
       {children}
     </AuthContext.Provider>
   );
