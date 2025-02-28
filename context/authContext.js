@@ -73,7 +73,6 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      // Remove tokens before API call
       await AsyncStorage.removeItem("accessToken");
       await AsyncStorage.removeItem("refreshToken");
 
@@ -95,7 +94,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, error, login, setError, logout }}>
+    <AuthContext.Provider value={{ user, setUser, loading, error, login, loginLoading,  setError, logout }}>
       {children}
     </AuthContext.Provider>
   );
