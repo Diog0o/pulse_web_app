@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+import api from "../utils/axiosInstance";
 import { useRouter } from "expo-router";
 import { Alert } from "react-native";
 
@@ -20,11 +20,8 @@ export const AuthProvider = ({ children }) => {
       const accessToken = await AsyncStorage.getItem("accessToken");
 
       if (accessToken) {
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${accessToken}`;
         try {
-          const response = await axios.get("http://localhost:3000/api/auth/me");
+          const response = await api.get("/auth/me");
           setUser(response.data.user);
         } catch (error) {
           console.log("Error fetching user:", error);
@@ -43,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     setError(null);
 
     try {
-      const response = await axios.post("http://localhost:3000/api/auth/login", {
+      const response = await api.post("/auth/login", {
         email,
         password,
       });
@@ -51,7 +48,6 @@ export const AuthProvider = ({ children }) => {
       await AsyncStorage.setItem("accessToken", response.data.accessToken);
       await AsyncStorage.setItem("refreshToken", response.data.refreshToken);
 
-      axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.accessToken}`;
       setUser(response.data.user);
       
       Alert.alert("Success", "You have successfully logged in");
@@ -76,7 +72,7 @@ export const AuthProvider = ({ children }) => {
       await AsyncStorage.removeItem("accessToken");
       await AsyncStorage.removeItem("refreshToken");
 
-      const response = await axios.post("http://localhost:3000/api/auth/logout", {
+      const response = await api.post("/auth/logout", {
         refreshToken,
       });
 
