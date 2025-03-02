@@ -2,7 +2,7 @@ import { Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { View, ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AuthProvider, useAuth } from "../context/authContext";
 
 export default function RootLayout() {
@@ -16,6 +16,7 @@ export default function RootLayout() {
 function LayoutContent() {
   const router = useRouter();
   const { user, loading } = useAuth();
+  const [appReady, setAppReady] = useState(false);
 
   const [loaded] = useFonts({
     "Anton-Regular": require("../assets/fonts/Anton-Regular.ttf"),
@@ -28,13 +29,16 @@ function LayoutContent() {
 
   useEffect(() => {
     if (!loading && loaded) {
+      setAppReady(true);
       if (!user) {
-        router.replace("/login");
+        setTimeout(() => {
+          router.push("/login");
+        }, 0);
       }
     }
   }, [loading, loaded, user]);
 
-  if (loading || !loaded) {
+  if (!appReady) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#1E90FF" />

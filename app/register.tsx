@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import api from "@/api/api";
+import axios from "axios";
 import { isAxiosError } from "axios";
 import InputBox from "@/components/inputBox";
 import Button from "@/components/Button";
@@ -48,8 +48,8 @@ export default function Register() {
       setLoading(true);
       const lowerCaseEmail = email.toLowerCase();
       console.log(lowerCaseEmail);
-      const response = await api.post(
-        "/users/register",
+      const response = await axios.post(
+        "http://localhost:3000/api/users/register",
         {
           username: username,
           email: lowerCaseEmail,
@@ -65,17 +65,16 @@ export default function Register() {
       AsyncStorage.setItem("token", response.data.token);
 
       router.replace("/(tabs)");
-
     } catch (error_message) {
       setLoading(false);
       setError(true);
       if (isAxiosError(error_message)) {
         if (error_message.response?.status === 400) {
-            setErrorMessage("This email is already registered. Login instead.");
+          setErrorMessage("This email is already registered. Login instead.");
         } else if (error_message.response?.status === 500) {
           setErrorMessage("Ops! Server is busy. Try again later.");
         } else {
-            setErrorMessage("Ops! Server is busy. Try again later.");
+          setErrorMessage("Ops! Server is busy. Try again later.");
         }
       } else {
         console.log(error_message);

@@ -23,7 +23,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="workouts"
         options={{
-          header: () => <CustomWorkoutHeader variant={2} />,
+          headerShown: false,
           tabBarLabel: "WORKOUTS",
           tabBarIcon: ({ focused, color }) => (
             <Ionicons
